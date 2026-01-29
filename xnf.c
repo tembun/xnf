@@ -61,7 +61,6 @@ main(int argc, char** argv)
 	j = 0;
 	lns_l = 0;
 	pesc = 0;
-	
 	/*
 	 * Split message string into lines.
 	 */
@@ -89,25 +88,19 @@ main(int argc, char** argv)
 		}
 	}
 	lns[lns_l++].str[j] = '\0';
-	
 	if ((pid = fork()) == -1)
 		err(1, "fork()");
 	if (pid != 0)
 		_exit(0);
-	
 	if (setsid() == -1)
 		err(1, "setsid()");
-	
 	if ((lock_fd = open(LOCK_FILE, O_CREAT | O_WRONLY, 0600)) == -1)
 		err(1, "open()");
-	
 	if (flock(lock_fd, LOCK_EX) == -1)
 		err(1, "flock()");
-	
 	dpl = XOpenDisplay(NULL);
 	if (dpl == NULL)
 		err(1, "XOpenDisplay()");
-	
 	scr = DefaultScreen(dpl);
 	screen = DefaultScreenOfDisplay(dpl);
 	scr_w = WidthOfScreen(screen);
@@ -115,13 +108,11 @@ main(int argc, char** argv)
 	vis = DefaultVisual(dpl, scr);
 	colormap = DefaultColormap(dpl, scr);
 	font = XLoadQueryFont(dpl, FONT);
-	
 	wattrs.override_redirect = True;
 	XAllocNamedColor(dpl, colormap, BG_COLOR, &color, &color);
 	wattrs.background_pixel = color.pixel;
 	XAllocNamedColor(dpl, colormap, BORDER_COLOR, &color, &color);
 	wattrs.border_pixel = color.pixel;
-	
 	w_w = 0;
 	w_h = PADDING * 2 + (lns_l-1) * LINEGAP;
 	for (i = 0; i < lns_l; i++) {
@@ -132,7 +123,6 @@ main(int argc, char** argv)
 		lns[i].asc = xch.ascent;
 		w_h += xch.ascent;
 	}
-	
 	w_w += PADDING * 2;
 	w_y = 0;
 	w_x = scr_w - w_w - BORDER_SZ * 2;
@@ -150,7 +140,6 @@ main(int argc, char** argv)
 		default:
 			errx(1, "Wrong placement");
 		}
-		
 		switch(argv[2][1]) {
 		case 'l':
 			w_x = 0;
@@ -165,16 +154,13 @@ main(int argc, char** argv)
 			errx(1, "Wrong placement");
 		}
 	}
-	
 	w = XCreateWindow(dpl, DefaultRootWindow(dpl), w_x, w_y,
 	    w_w, w_h, BORDER_SZ, DefaultDepth(dpl, scr), CopyFromParent,
 	    vis, CWOverrideRedirect | CWBackPixel | CWBorderPixel, &wattrs);
-	
 	gcv = 0;
 	gc = XCreateGC(dpl, w, 0, gcv);
 	XSetFont(dpl, gc, font->fid);
 	XSetForeground(dpl, gc, FONT_COLOR);
-	
 	XSelectInput(dpl, w, ExposureMask | ButtonPress);
 	XMapWindow(dpl, w);
 	XSync(dpl, False);
