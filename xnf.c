@@ -121,7 +121,7 @@ main(int argc, char **argv)
 	lns[lns_l++].str[j] = '\0';
 
 	/*
-	 * Fork, detch from the terminal and own or wait for the advisory lock.
+	 * Fork, detach from the terminal and own or wait for the advisory lock.
 	 */
 	if ((pid = fork()) == -1)
 		err(1, "fork()");
